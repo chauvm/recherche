@@ -2,7 +2,6 @@
 """
 
 import re
-import json
 
 class ParserBase(object):
     """ Base parser class
@@ -34,9 +33,10 @@ class ParserBase(object):
         if not current_map:
             current_map = {}
         for doc in self.documents:
-            with open(doc) as json_file:
-                data = json.load(json_file)
-                current_map.update(self.parse_categories(data))
+            #with open(doc) as json_file:
+            #    data = json.load(json_file)
+            #    current_map.update(self.parse_categories(data))
+            current_map.update(self.parse_categories(doc.data))
         return current_map
 
 
@@ -89,9 +89,10 @@ class ParserBase(object):
         if not current_map:
             current_map = {}
         for doc in self.documents:
-            with open(doc) as json_file:
-                data = json.load(json_file)
-                current_map.update(self.get_word_to_count_dict(data['content']))
+            #with open(doc) as json_file:
+            #    data = json.load(json_file)
+            #    current_map.update(self.get_word_to_count_dict(data['content']))
+            current_map.update(self.get_word_to_count_dict(doc.data['content']))
         return current_map
 
 
@@ -108,10 +109,12 @@ class ParserBase(object):
             if not skip_stop_words or not ParserBase.is_stop_word(word):
                 word_to_count_dict[word] = word_to_count_dict.get(word, 0) + 1
         return word_to_count_dict
-   
+
 
 if __name__ == "__main__":
-    parser = ParserBase(['D:\search\data\sherlock\lstb.json'], ','.join([
+    import document
+    document = document.JSONDocument(1, 'D:\search\data\sherlock\lstb.json', ['literature', 'thriller', 'detective'])
+    parser = ParserBase([document], ','.join([
         ParserBase.TITLE_ONLY, ParserBase.AUTHOR_ONLY]))
-    word_to_count_dict = parser.add_parsed_word_count_result({})
-    print(word_to_count_dict)
+    word_to_count = parser.add_parsed_word_count_result({})
+    print(word_to_count)
